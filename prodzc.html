@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>二维码打卡-产品追踪</title>
+</head>
+<link rel="stylesheet" href="./css/punchcardrecord.css">
+<link rel="stylesheet" href="./css/all.css">
+<script>
+        (function (doc, win) {
+            var docEl = doc.documentElement,
+            resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',
+            recalc = function (first) {
+                var clientWidth = docEl.clientWidth;
+                
+                if (!clientWidth) return;
+          
+                docEl.style.fontSize = 20 * (clientWidth / 752) + 'px';
+                
+            };
+            if (!doc.addEventListener) return;
+            win.addEventListener(resizeEvt, recalc, false);
+            doc.addEventListener('DOMContentLoaded', recalc, false);
+            recalc();
+        })(document, window);
+</script>
+<body>
+    <div id="app" style="width: 100%;">
+        <div style="background: #ffffff;">
+            <div class="userdetailbox" v-for='item in timelist'>
+                <div class="userdetailcss" @click='changeget(0)'>
+                    <div class="userdetailcssone">员工工号:{{item.number}}</div>
+                    <div class="userdetailcsstwo">{{nowtime}}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="./js/vue.js"></script>
+<script src="./js/allajax.js"></script>
+<script type="text/javascript">
+    function getUrlKey(name){
+        return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.href) || [,""])[1].replace(/\+/g, '%20')) || null
+    }
+    var app = new Vue({
+        el: '#app',
+        data: {
+            nowtime:'',
+            nowtime:'',
+            userdata:{},
+            timelist:[
+            //    {},{}
+            ]
+        },
+        watch: {
+            cur: function (oldValue, newValue) {
+                console.log(arguments);
+            },
+        },
+        methods: {
+            getusercardlist:function(type,typeid){
+                _ajax({
+                    url : "/clock/traceInfo",  // url---->地址
+                    type : "GET",   // type ---> 请求方式
+                    async : true,   // async----> 同步：false，异步：true 
+                    data :{
+                        employeeId:getUrlKey('typeid'),
+                        createTime:getUrlKey('nowtime'),
+                    },
+                    success : function(data){   //返回接受信息
+                        console.log(data)
+                        let datas =JSON.parse(data)
+                        if(datas.code==200){
+                            // getusercardlist(3,4)
+                            app.timelist=datas.data
+                            // app.timelist[typeid].list=data.data
+                            // app.userdata=datas.data
+                            // console.log(datas)
+                        }else{
+                            alert(datas.message)
+                        }
+                    }
+                }) 
+            }
+        },
+        computed: {
+           
+        }
+    });
+    app.getusercardlist()
+    app.nowtime=timeStamp2String(getUrlKey('nowtime'),7)
+</script>
+</html>

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>个人信息修改</title>
+</head>
+<link rel="stylesheet" href="./css/informationchange.css">
+<link rel="stylesheet" href="./css/all.css">
+<script src="./js/jquery.min.js"></script>
+<script>
+        (function (doc, win) {
+            var docEl = doc.documentElement,
+            resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',
+            recalc = function (first) {
+                var clientWidth = docEl.clientWidth;
+                
+                if (!clientWidth) return;
+          
+                docEl.style.fontSize = 20 * (clientWidth / 752) + 'px';
+                
+            };
+            if (!doc.addEventListener) return;
+            win.addEventListener(resizeEvt, recalc, false);
+            doc.addEventListener('DOMContentLoaded', recalc, false);
+            recalc();
+        })(document, window);
+</script>
+<body>
+    <div id="app" style="width: 100%;">
+        <div class="userheaderlabel">
+            个人信息
+        </div>
+        <div class="userdetailcss" style="padding-bottom: 1rem;">
+            <div class="userdetailcssone">头像</div>
+            <img class="userdetailcsstwoimg" :src='userdata.cover' id="showImg"></img>
+        </div>
+        <div class="userdetailcss">
+            <div class="userdetailcssone">姓名</div>
+            <div class="userdetailcsstwo">
+                    <input style="text-align: right;" v-model="userdata.name" >
+                >
+            </div>
+        </div>
+        <div class="userdetailcss">
+            <div class="userdetailcssone">性别</div>
+            <div class="userdetailcsstwo">
+                <select v-model="userdata.gender" dir="rtl" style="width: 8rem;">
+                    <option  value="0">保密</option>
+                    <option  value="1">男</option>
+                    <option value="2">女</option>
+                </select>
+                >
+            </div>
+        </div>
+        <div class="userdetailcss">
+            <div class="userdetailcssone">电话</div>
+            <div class="userdetailcsstwo">
+                <input style="text-align: right;" v-model="userdata.phone" >
+                >
+            </div>
+        </div>
+        <div class="userdetailcss">
+            <div class="userdetailcssone">出生年月</div>
+            <div class="userdetailcsstwo"><input style="text-align: right;" v-model="userdata.birth">></div>
+        </div>
+        <div class="userline"></div>
+        <div class="userheaderlabel">
+            公司信息
+        </div>
+        <div class="userdetailcss">
+            <div class="userdetailcssone">公司</div>
+            <div class="userdetailcsstwo">海宁合创纺织科技有限公司</div>
+        </div>
+        <div class="userdetailcss">
+            <div class="userdetailcssone">部门</div>
+            <div class="userdetailcsstwo">{{userdata.department}}</div>
+        </div>
+        <div class="userdetailcss">
+            <div class="userdetailcssone">职位</div>
+            <div class="userdetailcsstwo">{{userdata.position}}</div>
+        </div>
+        <div class="userdetailcss">
+            <div class="userdetailcssone">入职时间</div>
+            <div class="userdetailcsstwo">{{userdata.inTime}}</div>
+        </div>
+        <div @click='savebtn()' class="savebtn">保存</div>
+        <input accept="image/*" type="file" id="uploadIMG" onchange="btnUploadFile(event)" style="display: none"/>
+    </div>
+</body>
+<script src="./js/allajax.js"></script>
+<script src="./js/vue.js"></script>
+<script type="text/javascript">
+    var app = new Vue({
+        el: '#app',
+        data: {
+           userdata:{}
+        },
+        watch: {
+            cur: function (oldValue, newValue) {
+                console.log(arguments);
+            }
+        },
+        methods: {
+            savebtn:function(){
+                console.log(app.userdata)
+                console.log(123)
+                console.log(document.getElementById('uploadIMG').files[0])
+                console.log($("#showImg").attr("src"))
+                let putdata={
+                    id:app.userdata.id,
+                    name:app.userdata.name,
+                    birth:app.userdata.birth,
+                    cover:app.userdata.cover,
+                    phone:app.userdata.phone,
+                    gender:app.userdata.gender
+                }
+                putJSON("/employees/update",JSON.stringify(putdata),function(data){
+                    if(data.code==200){
+                        alert('修改信息成功')
+                    }else{
+                        alert('修改信息失败')
+                        // layer.msg('修改失败', {icon: 5})
+                    }
+                }) 
+            },
+            getuserdetail:function(){
+                _ajax({
+                    url : "/employees/info/"+localStorage.getItem('userId'),  // url---->地址
+                    type : "GET",   // type ---> 请求方式
+                    async : true,   // async----> 同步：false，异步：true 
+                    data :{},
+                    success : function(data){   //返回接受信息
+                        console.log(data)
+                        let datas =JSON.parse(data)
+                        if(datas.code==200){
+                            app.userdata=datas.data
+                        }
+                    }
+                }) 
+            },
+        },
+        computed: {
+           
+        }
+    });
+    app.getuserdetail()
+    $("#showImg").click(function(){
+        $("#uploadIMG").click();
+    });
+    function btnUploadFile(e){
+        //获取图片文件
+        var imgFile = e.target.files[0]; 
+        //后缀选取
+        if (!/\/(?:jpeg|jpg|png)/i.test(imgFile.type)){
+            console.log(图片格式不支持);
+            return;
+        }
+        //异步读取文件
+        var reader = new FileReader();
+        reader.onload = function(evt) {
+            //替换url
+            // $("#showImg").attr("src",evt.target.result);
+        }
+        reader.readAsDataURL(imgFile);
+        var formData = new FormData();
+        formData.append("files", document.getElementById('uploadIMG').files[0]);
+        $.ajax({
+                url: Url + '/file/addFile',
+                async : false,
+                type: "POST",
+                data: formData,
+                dataType: "json",
+                processData : false,
+                contentType : false,
+                success: function(data) {
+                    console.log(data)
+                    app.cover=data.data
+                    $("#showImg").attr("src",data.data);
+                    console.log("success");
+                },
+                error: function(xhr) {
+                    console.log("error");
+                }
+        });
+        // console.log(document.getElementById('uploadIMG').files[0])
+        // // console.log($("#showImg").attr("src"))
+        // console.log(imgFile)
+    }
+    // var formData = new FormData();
+    //     formData.append("imageFile", document.getElementById('uploadIMG').files[0]);
+    //     formData.append("photoUrl", $("#showImg").attr("src"));
+        // $.ajax({
+        //     url: url + token,
+        //     async : false,
+        //     type: "POST",
+        //     data: formData,
+        //     dataType: "json",
+        //     processData : false,
+        //     contentType : false,
+        //     success: function(data) {
+        //         console.log("success");
+        //     },
+        //     error: function(xhr) {
+        //         console.log("error");
+        //     }
+    // });
+</script>
+</html>

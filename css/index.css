@@ -1,0 +1,154 @@
+/* 员工信息 */
+.userbox{
+    width: 100%;
+    padding: 2.2rem 0 1.3rem 1.2rem;
+    border-bottom: 0.05rem solid rgba(0,0,0,0.2);
+    overflow: hidden;
+}
+.userbox>img{
+    float: left;
+    margin-right: 0.4rem;
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    /* background: red; */
+}
+.usernamebox{
+    display: inline-block;
+    font-size: 0.45rem;
+    float: left;
+    font-size: 1.1rem;
+    color: #959595;
+}
+.usernamecss{
+    color: #393939;
+    margin-bottom: 1rem;
+    font-size: 1.6rem;
+}
+.usertimebox{
+    margin-right: 2.4rem;
+    padding-top: 1.3rem;
+    font-size: 1.1rem;
+    float: right;
+}
+/* 上下班时间 */
+.workstatebox{
+    /* border-bottom: 0.1rem solid #CCCCCC; */
+    /* padding: 1rem 1rem; */
+    margin-top: 2.1rem;
+    margin-left: 1.2rem;
+    font-size: 1.05rem;
+}
+.worktimecss{
+    font-size: 1.5rem;
+    height: 1.05rem;
+}
+.worktimecss>p{
+    margin-left: 1.1rem;
+    display: inline-block;
+    padding: 0.2rem 0.5rem;
+    border: 0.025rem solid #F09A53;
+    color: #F09A53;
+
+}
+.timei{
+    display: inline-block;
+    margin-right: 0.5rem;
+    width: 1.05rem;
+    height: 1.05rem;
+    border-radius: 50%;
+    background: #4176F9;
+}
+.workstatebox>div:nth-child(1){
+    margin-bottom:3.6rem;
+}
+/* 打卡按钮 */
+.buttonbox{
+    margin-top: 19.4rem;
+}
+.punchbuttonbox{
+    margin: 0 auto;
+    width: 16rem;
+}
+.punchbuttoncss{
+    width: 16rem;
+    height: 5.9rem;
+    line-height: 5.9rem;
+    border-radius: 1rem;
+    text-align: center;
+    font-size: 1.6rem;
+    color: #FFFFFF;
+    box-shadow: 0.2rem 0.2rem #d1ddfa;
+    background-image: url(../img/button.png);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    -moz-background-size: 100% 100%;
+    /* background: url('../img/button.png'); */
+    /* background: #4CABF9; */
+}
+.punchbuttoncss:nth-child(1){
+    margin-bottom: 3.2rem;
+}
+/* 底部样式 */
+.footerbox{
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: 4.2rem;
+    padding-top: 1.6rem;
+    border-top: 0.05rem solid rgba(0,0,0,0.2);
+}
+.linkbox>a{
+    display: inline-block;
+    width: 32%;
+    font-size: 1.5rem;
+    color: #333333;
+    text-align: center;
+}
+.linkborderbox{
+    width: 32%;
+    margin-top: 0.6rem;
+    text-align: center;
+}
+.linkborderbox>i{
+    width: 0.5rem;
+    height: 0.3rem;
+    display: inline-block;
+    border-radius: 0.1rem;
+    background:#4176F9 ;
+}
+
+/* 手机绑定 */
+.allbox{
+    position: fixed;
+    top: 0;
+    z-index: 100;
+    width: 100%;
+    height: 100%;
+    background:rgba(0, 0, 0, 0.4);
+}
+.bindbox{
+    width: 20rem;
+    margin: 0 auto;
+    margin-top: 26rem;
+}
+.bindphonebtn{
+    border-radius: 1rem;
+    display: block;
+    margin: 0 auto;
+    color: #FFFFFF;
+    font-size: 1rem;
+    margin-top: 0.5rem;
+    border: 0.25rem solid #FFFFFF;
+    padding: 1rem;
+}
+.savebtn{
+    display: block;
+    color: #FFFFFF;
+    margin: 0 auto;
+    margin-top: 1rem;
+    width: 10rem;
+    height:4rem;
+    border-radius: 5rem;
+    background: #409EFF;
+}

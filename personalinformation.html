@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>二维码打卡-个人详情</title>
+</head>
+<link rel="stylesheet" href="./css/personalinformation.css">
+<link rel="stylesheet" href="./css/all.css">
+<script>
+        (function (doc, win) {
+            var docEl = doc.documentElement,
+            resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',
+            recalc = function (first) {
+                var clientWidth = docEl.clientWidth;
+                
+                if (!clientWidth) return;
+          
+                docEl.style.fontSize = 20 * (clientWidth / 752) + 'px';
+                
+            };
+            if (!doc.addEventListener) return;
+            win.addEventListener(resizeEvt, recalc, false);
+            doc.addEventListener('DOMContentLoaded', recalc, false);
+            recalc();
+        })(document, window);
+</script>
+<body>
+    <div id="app" style="width: 100%;">
+        <div class="userbox">
+            <img onclick="gotochange()" :src="userdata.cover"/>
+            <div class="usernamebox">
+                <div class="usernamecss">{{userdata.name}}</div>
+                <div>工号：{{userdata.number}}</div>
+            </div>
+        </div>
+        <div style="background: #ffffff;">
+            <div class="userdetailbox">
+                <div class="userdetailcss">
+                    <div class="userdetailcssone">企业</div>
+                    <div class="userdetailcsstwo">海宁合创纺织科技有限公司</div>
+                </div>
+                <div class="userdetailcss">
+                    <div class="userdetailcssone">姓名</div>
+                    <div class="userdetailcsstwo">{{userdata.name}}</div>
+                </div>
+                <div class="userdetailcss">
+                    <div class="userdetailcssone">部门</div>
+                    <div class="userdetailcsstwo">{{userdata.department}}</div>
+                </div>
+                <div class="userdetailcss">
+                    <div class="userdetailcssone">职位</div>
+                    <div class="userdetailcsstwo">{{userdata.position}}</div>
+                </div>
+                <div class="userdetailcss">
+                    <div class="userdetailcssone">入职时间</div>
+                    <div class="userdetailcsstwo">{{userdata.inTime}}</div>
+                </div>
+            </div>
+        </div>
+        <div class="footerbox">
+            <div class="linkbox">
+                <a href="./index.html?state=-1">员工打卡</a>
+                <a href="./punchcardrecord.html">打卡记录</a>
+                <a href="./personalinformation.html" style="color: #4176F9;">个人信息</a>
+            </div>
+            <div class="linkborderbox"><i></i></div>
+        </div>
+    </div>
+</body>
+<script src="./js/vue.js"></script>
+<script src="./js/allajax.js"></script>
+<script type="text/javascript">
+    var app = new Vue({
+        el: '#app',
+        data: {
+           userdata:{}
+        },
+        watch: {
+            cur: function (oldValue, newValue) {
+                console.log(arguments);
+            }
+        },
+        methods: {
+            getuserdetail:function(){
+                _ajax({
+                    url : "/employees/info/"+localStorage.getItem('userId'),  // url---->地址
+                    type : "GET",   // type ---> 请求方式
+                    async : true,   // async----> 同步：false，异步：true 
+                    data :{},
+                    success : function(data){   //返回接受信息
+                        console.log(data)
+                        let datas =JSON.parse(data)
+                        if(datas.code==200){
+                            app.userdata=datas.data
+                            console.log(datas)
+                        }
+                    }
+                }) 
+            }
+        },
+        computed: {
+           
+        }
+    });
+    app.getuserdetail()
+    function gotochange(){
+        location.href='./informationchange.html'
+    }
+</script>
+</html>

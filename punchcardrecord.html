@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>二维码打卡-打卡记录</title>
+</head>
+<link rel="stylesheet" href="./css/all.css">
+<link rel="stylesheet" href="./css/punchcardrecord.css">
+<script>
+        (function (doc, win) {
+            var docEl = doc.documentElement,
+            resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',
+            recalc = function (first) {
+                var clientWidth = docEl.clientWidth;
+                
+                if (!clientWidth) return;
+          
+                docEl.style.fontSize = 20 * (clientWidth / 752) + 'px';
+                
+            };
+            if (!doc.addEventListener) return;
+            win.addEventListener(resizeEvt, recalc, false);
+            doc.addEventListener('DOMContentLoaded', recalc, false);
+            recalc();
+        })(document, window);
+</script>
+<body>
+    <div id="app" style="width: 100%;">
+        <div class="userbox">
+            <img :src="userdata.cover"/>
+            <div class="usernamebox">
+                <div class="usernamecss">{{userdata.name}}</div>
+                <div>工号：{{userdata.number}}</div>
+            </div>
+            <div class="usertimebox">
+                <label @click='up()'><</label>  {{nowtime}} <label @click='down()'>></label>
+            </div>
+        </div>
+        <div style="background: #ffffff;">
+            <div class="userdetailbox">
+                <div class="userdetailcss" @click='changeget(0)'>
+                    <div class="userdetailcssone">平均工时</div>
+                    <div class="userdetailcsstwo">{{worklist.avgWork?Number(worklist.avgWork).toFixed(2):'0'}}小时<img class="bqcss" :src="timelist[0].ischeck?'./img/upjt.png':'./img/downjt.png'"></div>
+                </div>
+                <ul class="shiftsbox" v-if='timelist[0].ischeck'>
+                    <li v-for='item in timelist[0].list'>
+                        <div class="userdetailcssone">{{item.day}}(星期{{worktime[item.week]}})</div>
+                        <div class="userdetailcsstwo">{{item.workHour}}小时</div>
+                    </li>
+                </ul>
+                <div class="userdetailcss" @click='changeget(1)'>
+                    <div class="userdetailcssone">出勤班次</div>
+                    <div class="userdetailcsstwo">{{worklist.workNum?worklist.workNum:'0'}}次<img class="bqcss" :src="timelist[1].ischeck?'./img/upjt.png':'./img/downjt.png'"></div>
+                </div>
+                <ul class="shiftsbox" v-if='timelist[1].ischeck'>
+                    <li v-for='item in timelist[1].list'>
+                        <div class="userdetailcssone">默认班次:{{worklist.workNum}}次</div>
+                        <div class="userdetailcsstwo">缺勤：{{worklist.restDays}}次</div>
+                    </li>
+                </ul>
+                <div class="userdetailcss" @click='changeget(2)'>
+                    <div class="userdetailcssone">出勤天数</div>
+                    <div class="userdetailcsstwo">{{worklist.workDays?worklist.workDays:'0'}}天<img class="bqcss" :src="timelist[2].ischeck?'./img/upjt.png':'./img/downjt.png'"></div>
+                </div>
+                <ul class="shiftsbox" v-if='timelist[2].ischeck'>
+                    <li v-for='item in timelist[2].list'>
+                        <div class="userdetailcssone">{{item.day}}(星期{{worktime[item.week]}})</div>
+                        <div class="userdetailcsstwo">1天</div>
+                    </li>
+                </ul>
+                <div class="userdetailcss" @click='changeget(3)'>
+                    <div class="userdetailcssone">休息天数</div>
+                    <div class="userdetailcsstwo">{{worklist.restDays?worklist.restDays:'0'}}天<img class="bqcss" :src="timelist[3].ischeck?'./img/upjt.png':'./img/downjt.png'"></div>
+                </div>
+                <ul class="shiftsbox" v-if='timelist[3].ischeck'>
+                    <li v-for='item in timelist[3].list'>
+                        <div class="userdetailcssone">{{item.day}}(星期{{item.week}})</div>
+                        <div class="userdetailcsstwo">1天</div>
+                    </li>
+                </ul>
+                <div class="userdetailcss" @click='changeget(4)'>
+                    <div class="userdetailcssone">缺卡次数</div>
+                    <div class="userdetailcsstwo">{{worklist.restDays?worklist.restDays:'0'}}天<img class="bqcss" :src="timelist[4].ischeck?'./img/upjt.png':'./img/downjt.png'"></div>
+                </div>
+                <ul class="shiftsbox" v-if='timelist[4].ischeck'>
+                    <li v-for='item in timelist[4].list'>
+                        <div class="userdetailcssone">{{item.day}}(星期{{item.week}})</div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="footerbox">
+            <div class="linkbox">
+                <a  href="./index.html?state=-1">员工打卡</a>
+                <a href="./punchcardrecord.html" style="color: #4176F9;">打卡记录</a>
+                <a href="./personalinformation.html">个人信息</a>
+            </div>
+            <div class="linkborderbox"><i></i></div>
+        </div>
+    </div>
+</body>
+<script src="./js/vue.js"></script>
+<script src="./js/allajax.js"></script>
+<script type="text/javascript">
+    var app = new Vue({
+        el: '#app',
+        data: {
+            nowtime:'',
+            // nowsearch:'',
+            userdata:{},
+            worklist:{},
+            worktime:{
+                1:"一",
+                2:"二",
+                3:"三",
+                4:"四",
+                5:"五",
+                6:"六",
+                7:"日"
+            },
+            timelist:[
+               {
+                list:[],
+                ischeck:false
+               },{
+                list:[],
+                ischeck:false
+               },{
+                list:[],
+                ischeck:false
+               },{
+                list:[],
+                ischeck:false
+               },{
+                list:[],
+                ischeck:false
+               }
+            ]
+        },
+        watch: {
+            cur: function (oldValue, newValue) {
+                console.log(arguments);
+            },
+        },
+        methods: {
+            changeget:function(index){
+                for(let i=0;i<app.timelist.length;i++){
+                    if(i!=index){
+                        app.timelist[i].ischeck=false
+                    }
+                }
+                if(index==0){
+                    app.timelist[0].ischeck=!app.timelist[0].ischeck
+                    app.getuserworklisttwo(0)
+                }else if(index==1){
+                    app.timelist[1].ischeck=!app.timelist[1].ischeck
+                    app.getuserworklisttwo(1)
+                }else if(index==2){
+                    app.timelist[2].ischeck=!app.timelist[2].ischeck
+                    app.getusercardlist(1,2)
+                }else if(index==3){
+                    app.timelist[3].ischeck=!app.timelist[3].ischeck
+                    app.getusercardlist(3,3)
+                }else{
+                    app.getusercardlist(2,4)
+                    app.timelist[4].ischeck=!app.timelist[4].ischeck
+                }
+            },
+            getuserdetail:function(){
+                _ajax({
+                    url : "/employees/info/"+localStorage.getItem('userId'),  // url---->地址
+                    type : "GET",   // type ---> 请求方式
+                    async : true,   // async----> 同步：false，异步：true 
+                    data :{},
+                    success : function(data){   //返回接受信息
+                        console.log(data)
+                        let datas =JSON.parse(data)
+                        if(datas.code==200){
+                            app.userdata=datas.data
+                            console.log(datas)
+                        }
+                    }
+                })
+            },
+            getusertimelist:function(){
+                let timedatas = app.nowtime.split('.')
+                _ajax({
+                    url : "/clockRecord/getInfo",  // url---->地址
+                    type : "GET",   // type ---> 请求方式
+                    async : true,   // async----> 同步：false，异步：true 
+                    data :{
+                        employeeId:localStorage.getItem('userId'),
+                        year:timedatas[0],
+                        month:timedatas[1]
+                    },
+                    success : function(data){   //返回接受信息
+                        console.log(data)
+                        let datas =JSON.parse(data)
+                        if(datas.code==200){
+                            app.worklist=datas.data
+                            console.log(datas)
+                        }
+                    }
+                })
+            },
+            getuserworklisttwo:function(type){
+                let timedatas = app.nowtime.split('.')
+                _ajax({
+                    url : "/clockRecord/getList",  // url---->地址
+                    type : "GET",   // type ---> 请求方式
+                    async : true,   // async----> 同步：false，异步：true 
+                    data :{
+                        employeeId:localStorage.getItem('userId'),
+                        year:timedatas[0],
+                        type:1,
+                        month:timedatas[1]
+                    },
+                    success : function(data){   //返回接受信息
+                        console.log(data)
+                        let datas =JSON.parse(data)
+                        if(datas.code==200){
+                            app.timelist[type].list=datas.data
+                            // app.worklist=datas.data
+                            console.log(datas)
+                        }
+                    }
+                })
+            },
+            up:function(){
+                let data=app.nowtime.split('.')
+                if(Number(data[1])-1==0){
+                    data[1]=12
+                    data[0]= Number(data[0])-1
+                }else{
+                    data[1]=Number(data[1])-1
+                }
+                app.nowtime=data[0]+'.'+ data[1]
+                app.getusertimelist()
+            },
+            down:function(){
+                let data=app.nowtime.split('.')
+                if(Number(data[1])+1==13){
+                    data[1]=1
+                    data[0]= Number(data[0])+1
+                }else{
+                    data[1]=Number(data[1])+1
+                }
+                app.nowtime=data[0]+'.'+ data[1]
+                app.getusertimelist()
+            },
+            getusertime:function(){
+                var date=new Date();
+                // app.nowsearch=date
+                app.nowtime=timeStamp2String(date,11)
+                app.getusertimelist()
+            },
+            getusercardlist:function(type,typeid){
+                _ajax({
+                    url : "/clockRecord/getAll",  // url---->地址
+                    type : "GET",   // type ---> 请求方式
+                    async : true,   // async----> 同步：false，异步：true 
+                    data :{
+                        type:type,
+                        employeeId:localStorage.getItem('userId')
+                    },
+                    success : function(data){   //返回接受信息
+                        console.log(data)
+                        let datas =JSON.parse(data)
+                        if(datas.code==200){
+                            // getusercardlist(3,4)
+
+                            app.timelist[typeid].list=datas.data
+                            // app.userdata=datas.data
+                            // console.log(datas)
+                        }
+                    }
+                }) 
+            }
+        },
+        computed: {
+           
+        }
+    });
+    app.getuserdetail()
+    app.getusertime()
+</script>
+</html>

@@ -1,0 +1,56 @@
+/* 个人信息 */
+.userheaderlabel{
+    width: 33rem;
+    margin: 0 auto;
+    font-size: 1.4rem;
+    margin-top: 2.4rem;
+    color: #373535;
+}
+.userdetailcss{
+    width: 33rem;
+    margin: 0 auto;
+    height: 5rem;
+    line-height: 5rem;
+    overflow: hidden;
+    border-bottom: 0.05rem solid rgba(0,0,0,0.2);
+}
+.userdetailcss>div{
+    font-size: 1.3rem;
+}
+.userdetailcssone{
+    float: left;
+    display: inline-block;
+}
+.userdetailcsstwo{
+    float: right;
+    display: inline-block;
+}
+.userdetailcsstwoimg{
+    float: right;
+    display: block;
+    height: 5rem;
+    /* background: red; */
+    border-radius: 50%;
+    width: 5rem;
+}
+.userline{
+    height: 2.4rem;
+    background: #F5F9FB;
+}
+
+.savebtn{
+    margin: 4rem auto;
+    width: 4rem;
+    border-radius: 1rem;
+    font-size: 1.5rem;
+    color: #F5F9FB;
+    text-align: center;
+    padding: 2rem;
+    background:#409EFF ;
+}
+select {
+    direction: rtl;
+}
+select option {
+    direction: ltr;
+}

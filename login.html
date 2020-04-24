@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>二维码打卡-登录</title>
+    <style>
+        /* 手机绑定 */
+        .allbox{
+            position: fixed;
+            top: 0;
+            z-index: 100;
+            width: 100%;
+            height: 100%;
+            /* background:rgba(0, 0, 0, 0.4); */
+        }
+        .bindbox{
+            width: 100%;
+            text-align: center;
+            margin: 0 auto;
+            margin-top: 8rem;
+        }
+        .bindphonebtn{
+            /* border-radius: 1rem; */
+            display: block;
+            margin: 0 auto;
+            /* color: #FFFFFF; */
+            width: 29rem;
+            color: rgba(0, 0, 0, 0.2);
+            font-size: 1.5rem;
+            margin-top: 5.5rem;
+            padding-bottom: 1.3rem;
+            border-bottom: 0.05rem solid rgba(0, 0, 0, 0.2);
+            /* padding: 1rem; */
+        }
+        .savebtn{
+            display: block;
+            z-index: 99999;
+            color: #FFFFFF;
+            font-size: 1.5rem;
+            text-align: center;
+            margin: 0 auto;
+            margin-top: 5.5rem;
+            width: 29rem;
+            background-image: url(./img/loginbtn.png);
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+            -moz-background-size: 100% 100%;
+            /* background: url('./img/loginbtn.png'); */
+            height:5.3rem;
+            border-radius: 1rem;
+            /* background: #409EFF; */
+        }
+        .logopic{
+            margin: 0 auto;
+            width: 10rem;
+            height: 10rem;
+        }
+        .tstitle{
+            margin-top: 8.3rem;
+            text-align: center;
+            font-size: 2rem;
+            color: #000000;
+        }
+    </style>
+    <link rel="stylesheet" href="./css/all.css">
+    <script>
+            (function (doc, win) {
+                var docEl = doc.documentElement,
+                resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',
+                recalc = function (first) {
+                    var clientWidth = docEl.clientWidth;
+                    
+                    if (!clientWidth) return;
+              
+                    docEl.style.fontSize = 20 * (clientWidth / 752) + 'px';
+                    
+                };
+                if (!doc.addEventListener) return;
+                win.addEventListener(resizeEvt, recalc, false);
+                doc.addEventListener('DOMContentLoaded', recalc, false);
+                recalc();
+            })(document, window);
+    </script>
+</head>
+<body >
+<div id="app">
+    <div class="allbox" v-if='isphone'>
+        <div class="bindbox">
+            <img class="logopic" src="./img/logo.png">
+                <div class="tstitle">请绑定手机号</div>
+                <input v-model='phone' class="bindphonebtn" placeholder="请填写手机号">
+             <button onclick='savephone()' class="savebtn">保存</button>
+        </div>
+    </div>
+    <!-- <a href="https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxc2c9c1f68146c9a6&redirect_uri=http://www.baidu.com/person.do&response_type=code&scope=snsapi_userinfo&state='123456'#wechat_redirect">跳转测试</a> -->
+</div>
+</body>
+<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+<script src="./js/vue.js"></script>
+<script>
+    // const typeid ='1'
+    let  typeid =getUrlKey('typeid')
+    if(typeid==null||typeid==undefined||typeid==''){
+        typeid=0
+    }
+     var app = new Vue({
+        el: '#app',
+        data: {
+           isphone:true,
+           phone:''
+        },
+        watch: {
+            cur: function (oldValue, newValue) {
+                console.log(arguments);
+            }
+        },
+        methods: {
+            checkPhone:function (){ 
+                var phone = app.phone;
+                if(!(/^1[3456789]\d{9}$/.test(phone))){ 
+                    alert("手机号码有误，请重填");  
+                    return false; 
+                } 
+            }
+        },
+        computed: {
+           
+        }
+    });
+    function savephone(){
+        // console.log(app.phone)
+        if (!(/^1[34578]\d{9}$/.test(app.phone))) {
+                alert('电话号码格式错误')  
+        }else{
+            // localStorage.setItem('phone',app.phone)
+            let url="https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxf2677d625e6881f4&redirect_uri=http://ws.zhanchengwlkj.com/qrcode/gzh/index.html?phone="+app.phone+"&response_type=code&scope=snsapi_userinfo&state="+typeid+"#wechat_redirect"
+            location.href=url
+        }
+        
+    }
+    function getUrlKey(name){
+        return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.href) || [,""])[1].replace(/\+/g, '%20')) || null
+    }
+</script>
+</html>
